@@ -4,6 +4,8 @@
 
 */
 
+//try keep pwm pins free unless needed
+
 #include <Pixy2.h>
 #include <SPI.h>
 Pixy2 pixy; // Pixycam takes pins 10, 11, 12, and 13
@@ -17,6 +19,8 @@ const int pwmA = 5;   // PWM signal on digital pin 5 <-- has pwm
 const int dirB = 2;   // Direction control on digital pin 2
 const int pwmB = 3;   // PWM signal on digital pin 3 <-- has pwm
 
+const int trigPin = 8; // trigger doesnt need pwm so pin 8
+const int echoPin = 7; // echo doesnt need pwn so pin 7
 
 //The most important method in the Arduino library is getBlocks(), which returns the number of objects Pixy has detected. You can then look in the
 //pixy.ccc.blocks[] array for information about each detected object (one array member for each detected object.) Each array member (i) contains the following fields:
@@ -31,37 +35,15 @@ const int pwmB = 3;   // PWM signal on digital pin 3 <-- has pwm
 //pixy.ccc.blocks[i].m_age The number of frames the block has been tracked.
 //pixy.ccc.blocks[i].print() A member function that prints the detected object information to the serial port
 
-// Function Prototypes
-int stateMachine_calculateBalls();
-int stateMachine();
-
-
-void setup() {
-  pinMode(dirA, OUTPUT); //pin 4
-  pinMode(pwmA, OUTPUT); //pin 5
-  pinMode(dirB, OUTPUT); //pin 2
-  pinMode(pwmB, OUTPUT); //pin 3
-
-  pixy.init();
-  servo.attach(9); //servo on pin 9
-
-  Serial.begin(115200);
-  Serial.print("Starting...\n");
-}
-
-void loop() {
-  
-  int newVar = stateMachine_calculateBalls();
-  Serial.println(newVar);
-  
-
-}
-
-
-  if (pixy.ccc.numBlocks) { // if there are any balls in the FOV --> numBlocks is the amount of blocks    
+void goToBase() {
+  if (pixy.ccc.numBlocks) { // if there is anything detected in FOV --> numBlocks is the amount of blocks
+    for (int i = 0; i < pixy.ccc.numBlocks; i++) { // for each ball in FOV,
       if (pixy.ccc.blocks[i].m_signature == 4) { // if signature is 4 (base colour)
         // go to base????
       }
+    }
+  }
+}
 
 
 int stateMachine_calculateBalls() { // calculate the net points of balls in the claws
@@ -115,4 +97,46 @@ void motorForwards() {
   analogWrite(pwmB, motorSpeed);
 
   delay(15);
+}
+
+int frontDistance() {
+  float duration, distance; // duration and distance are both floats
+  
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration*.0343)/2;
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  delay(100);
+  return distance;
+}
+
+void setup() {
+  pinMode(dirA, OUTPUT); //pin 4
+  pinMode(pwmA, OUTPUT); //pin 5
+  pinMode(dirB, OUTPUT); //pin 2
+  pinMode(pwmB, OUTPUT); //pin 3
+
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  pixy.init();
+  
+  servo.attach(9); //servo on pin 9
+
+  Serial.begin(115200);
+  Serial.print("Starting...\n");
+}
+
+void loop() {
+  
+  int newVar = stateMachine_calculateBalls();
+  Serial.println(newVar);
+  
+
 }
