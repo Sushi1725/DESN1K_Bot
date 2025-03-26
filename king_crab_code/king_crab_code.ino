@@ -11,6 +11,12 @@ Pixy2 pixy; // Pixycam takes pins 10, 11, 12, and 13
 #include <Servo.h>
 Servo servo; // Servo on pin 9
 
+const int dirA = 4;   // Direction control on digital pin 4
+const int pwmA = 5;   // PWM signal on digital pin 5 <-- has pwm
+
+const int dirB = 2;   // Direction control on digital pin 2
+const int pwmB = 3;   // PWM signal on digital pin 3 <-- has pwm
+
 
 //The most important method in the Arduino library is getBlocks(), which returns the number of objects Pixy has detected. You can then look in the
 //pixy.ccc.blocks[] array for information about each detected object (one array member for each detected object.) Each array member (i) contains the following fields:
@@ -31,11 +37,16 @@ int stateMachine();
 
 
 void setup() {
-  Serial.begin(115200);
-  Serial.print("Starting...\n");
+  pinMode(dirA, OUTPUT); //pin 4
+  pinMode(pwmA, OUTPUT); //pin 5
+  pinMode(dirB, OUTPUT); //pin 2
+  pinMode(pwmB, OUTPUT); //pin 3
 
   pixy.init();
   servo.attach(9); //servo on pin 9
+
+  Serial.begin(115200);
+  Serial.print("Starting...\n");
 }
 
 void loop() {
@@ -45,6 +56,13 @@ void loop() {
   
 
 }
+
+
+  if (pixy.ccc.numBlocks) { // if there are any balls in the FOV --> numBlocks is the amount of blocks    
+      if (pixy.ccc.blocks[i].m_signature == 4) { // if signature is 4 (base colour)
+        // go to base????
+      }
+
 
 int stateMachine_calculateBalls() { // calculate the net points of balls in the claws
   int netPoints = 0;
@@ -86,5 +104,15 @@ void tiltPixy() {
 
   int pos = 0;
   servo.write(pos);
+  delay(15);
+}
+
+void motorForwards() {
+  int motorSpeed = 128; // 50% duty cycle (128 out of 255)
+  digitalWrite(dirA, HIGH); // forwards direction
+  digitalWrite(dirB, HIGH); // forwards direction
+  analogWrite(pwmA, motorSpeed);
+  analogWrite(pwmB, motorSpeed);
+
   delay(15);
 }
