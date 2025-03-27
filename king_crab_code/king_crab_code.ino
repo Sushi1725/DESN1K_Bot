@@ -168,7 +168,7 @@ void loop() {
         // check for obstacles
         if (getFrontDistance <= 10) {
             // stop/run away
-            // motorRotate(100);
+            motorRotate(100);
         } else {
             int netPoints = getNetPoints();
 
