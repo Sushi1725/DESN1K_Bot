@@ -50,6 +50,8 @@ void seekObject(int signature){
                 if (pixy.ccc.blocks[i].m_signature == signature) {
                     // maybe add check here to make sure its in the centre of the frame rougly
                     return;
+                } else {
+                    motorRotate();
                 }
             }
         }
