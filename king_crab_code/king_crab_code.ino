@@ -26,6 +26,10 @@ const long tickInterval = 50; // lets set every tick to be 50ms ifykyk
 const int redSignature = 3;
 const int baseSignature = 4;
 
+// set function prototypes
+void setPixyCam(String position);
+void motorRotate(int time = 15);
+
 
 //The most important method in the Arduino library is getBlocks(), which returns the number of objects Pixy has detected. You can then look in the
 //pixy.ccc.blocks[] array for information about each detected object (one array member for each detected object.) Each array member (i) contains the following fields:
@@ -44,7 +48,9 @@ const int baseSignature = 4;
 void seekObject(int signature){
     // idea is to rotate the robot until the objectis rougly in the middle of the frame
     setPixyCam("UP");
-    while true:
+    while (true) {
+        pixy.ccc.getBlocks(); // update the blocks each while instance
+        Serial.println(pixy.ccc.numBlocks);
         if (pixy.ccc.numBlocks) {
             for (int i = 0; i < pixy.ccc.numBlocks; i++) {
                 if (pixy.ccc.blocks[i].m_signature == signature) {
@@ -55,6 +61,7 @@ void seekObject(int signature){
                 }
             }
         }
+    }
 }
 
 
@@ -82,15 +89,15 @@ int getNetPoints() { // calculate the net points of balls in the claws
 }
 
 // !TODO - get the two pixycam positions and swap between them
-void setPixyCam(string position) {
+void setPixyCam(String position) {
     if (position = "DOWN"){
         //down position
-        int pos = 0;
+        int pos = 30;
         servo.write(pos);
         delay(15);
     } else if (position = "UP"){
         // up position
-        int pos = 0;
+        int pos = 50;
         servo.write(pos);
         delay(15);
     }
@@ -125,7 +132,7 @@ void motorRotate(int time = 15) {
 
 
     analogWrite(pwmA, 0);
-    analogWrite(pwmB, 0);
+    analogWrite(pwmB, 0);   // causes jittery wheels
 }
 
 int getFrontDistance() {
@@ -139,11 +146,12 @@ int getFrontDistance() {
 
     duration = pulseIn(echoPin, HIGH);
     distance = (duration*.0343)/2;
+    Serial.println(distance);
 
     return distance;
 }
 
-void setup() {
+void setup() {    
     // PIN SETUP
     pinMode(dirA, OUTPUT); //pin 4
     pinMode(pwmA, OUTPUT); //pin 5
@@ -163,12 +171,13 @@ void setup() {
 
 void loop() {
     unsigned long currentTick = millis(); // get current time in milliseocnds
-
+    Serial.println("here");
+    delay(15);  
     if (currentTick - lastTick >= tickInterval){
         // tick elapsed, run some code...
 
         // check for obstacles
-        if (getFrontDistance <= 10) {
+        if (getFrontDistance() <= 10) {
             // stop/run away
             motorRotate(100);
         } else {
