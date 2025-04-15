@@ -53,7 +53,6 @@ void motorForwards(int time = 15);
 void seekObject(int signature){
     // idea is to rotate the robot until the objectis rougly in the middle of the frame
     setPixyCam("UP");
-    bool seenSignature = false;
     while (true) {
         // check for obstacles while seeking objects
         if (getFrontDistance() <= 20) { // length of claws alrdy 12cm
@@ -64,80 +63,26 @@ void seekObject(int signature){
         }
       
         pixy.ccc.getBlocks(); // update the blocks each while instance
-
+        Serial.println(pixy.ccc.numBlocks);
         if (pixy.ccc.numBlocks) { //if any blocks
             for (int i = 0; i < pixy.ccc.numBlocks; i++) {
-<<<<<<< HEAD
                 pixy.ccc.blocks[i].print();
                 Serial.println(signature);
                 
                 if (pixy.ccc.blocks[i].m_signature == signature) { // if whats seen is what is wanted
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
                     motorStop();
                     centerObject(signature, i);
                     motorForwards();
-=======
-=======
->>>>>>> Stashed changes
-                    motorStop();
-                    centerObject(signature, i);
-                    motorForwards();
-=======
-                if (pixy.ccc.blocks[i].m_signature == signature) {
-                    motorStop();
-                    //centerObject(signature, i);
-                    //motorForwards();
-                    seenSignature = true;
->>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
                     // maybe add check here to make sure its in the centre of the frame rougly
-                    centerObject(signature, i);
                     return;
-                }
-            }
-
-            if (!seenSignature) {
-              motorRotate(200);
-            }
-        } else {
-            // possible that pixycam just doesnt detect anything at all
-            delay(200); //delay half a second to make sure pixycam not being dumb
-            pixy.ccc.getBlocks(); // update the blocks each while instance
-            if (!pixy.ccc.numBlocks) {
-                motorRotate(200); // if still no blocks rotate
-            } else {
-                for (int i = 0; i < pixy.ccc.numBlocks; i++) {
-                    if (pixy.ccc.blocks[i].m_signature == signature) {
-                        motorStop();
-                        //centerObject(signature, i);
-                        //motorForwards();
-                        seenSignature = true;
-                        // maybe add check here to make sure its in the centre of the frame rougly
-                        centerObject(signature, i);
-                        return;
-                    }
-                }
-
-                if (!seenSignature) {
-                motorRotate(200);
+                } else {
+                    motorRotate(250); //rotate for quarter sec
                 }
             }
         }
     }
 }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
 void centerObject(int signature, int i) { //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     setPixyCam("UP"); // Ensure the camera is in the right position
     bool hasSeenSignature = false;
@@ -160,50 +105,26 @@ void centerObject(int signature, int i) { //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
                         Serial.print("centering: ");
                         Serial.println(objectX);
-=======
-void centerObject(int signature, int blockIndex) {
-    Serial.println("Starting centering process...");
-    int centerX = 158;
-    int threshold = 20;
->>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
     
-    while (true) {
-        pixy.ccc.getBlocks();
-        if (pixy.ccc.numBlocks) {
-//            for (int i = 0; i < pixy.ccc.numBlocks; i++) {
-                if (pixy.ccc.blocks[blockIndex].m_signature == signature) {
-                    int objectX = pixy.ccc.blocks[blockIndex].m_x;
-                    Serial.print("Object X Position: ");
-                    Serial.println(objectX);
-                    
-                    if (objectX < centerX - threshold) {
-                        Serial.println("Turning Left...");
-                        motorRotate(-10);
-                        motorStop();
-                    } else if (objectX > centerX + threshold) {
-                        Serial.println("Turning Right...");
-                        motorRotate(10);
-                        motorStop();
-                    } else {
-                        Serial.println("Object Centered!");
-                        motorStop();
-                        return;
+                        if (objectX < centerX - threshold) {
+                            Serial.println("Turning Left...");
+                            motorRotate(-10); // Rotate left
+                        } else if (objectX > centerX + threshold) {
+                            Serial.println("Turning Right...");
+                            motorRotate(10); // Rotate right
+                        } else {
+                            Serial.println("Object Centered!");
+                            hasSeenSignature = false;
+                            return; // Stop rotating once centered
+                        }
+                        delay(50); //catch incase overshoot in centering (increase as needed)
                     }
+                } else {
+                  break;
                 }
 //            }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
         } 
         delay(50); //catch incase overshoot in centering (increase as needed)
-=======
-        }
->>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
     }
 }
 
@@ -227,8 +148,6 @@ int getNetPoints() { // calculate the net points of balls in the claws
                 netPoints -= 2;
             }
         }
-    } else {
-        netPoints = 0;
     }
     return netPoints;
 }
@@ -248,21 +167,7 @@ void setPixyCam(String position) {
     }
 }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 bool ballIntoClaws() { //note, this will check if ANY ball goes into the claw (even after searching and centering)
-=======
-=======
->>>>>>> Stashed changes
-<<<<<<< HEAD
-bool ballIntoClaws() { //note, this will check if ANY ball goes into the claw (even after searching and centering)
-=======
-bool ballIntoClaws() {
->>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     while (true) {
         if (getFrontDistance() <= 20) { // length of claws alrdy 12cm
             // stop/run away
@@ -284,21 +189,7 @@ bool ballIntoClaws() {
         
         if (maxY > 0 && maxY >= FRAME_BOTTOM - 10) {  //this -10 will be dependent on the speed (faster it goes, less responsive the getting y coord)
             wasAtBottom = true;  // ball in claw
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 //            return false;                                 // whats the point of this??
-=======
-=======
->>>>>>> Stashed changes
-<<<<<<< HEAD
-//            return false;                                 // whats the point of this??
-=======
-            return false;
->>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         } else if (wasAtBottom && maxY == 0) {  
           // Object was at bottom and is now gone
           Serial.println("Object exited from the bottom!");
@@ -312,24 +203,10 @@ bool ballIntoClaws() {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MOTOR FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void motorForwards(int time = 15) {
     // move forward time ms (default 15 ms)
-    int motorSpeed = 100; // 50% duty cycle (128 out of 255)
+    int motorSpeed = 128; // 50% duty cycle (128 out of 255)
     digitalWrite(dirA, HIGH); // forwards direction
     digitalWrite(dirB, HIGH); // forwards direction
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     analogWrite(pwmA, motorSpeed+40);
-=======
-=======
->>>>>>> Stashed changes
-<<<<<<< HEAD
-    analogWrite(pwmA, motorSpeed+40);
-=======
-    analogWrite(pwmA, motorSpeed+27);
->>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     analogWrite(pwmB, motorSpeed);
 
     delay(time); //! TODO - Issue where it can cause hangups in main thread --> use ticks to handle rather than delay
@@ -355,7 +232,7 @@ void motorReverse(int time = 15) {
 // !TODO - Test & debug motor turning
 void motorRotate(int time) {
     // move forward time ms (default 15 ms)
-    int motorSpeed = 90; // 50% duty cycle (128 out of 255)
+    int motorSpeed = 128; // 50% duty cycle (128 out of 255)
 
     if (time > 0) {
         digitalWrite(dirA, HIGH); 
@@ -420,24 +297,11 @@ void setup() {
 }
 
 void loop() {
-//   if (getFrontDistance() <= 20) { // length of claws alrdy 12cm
-//     stop/run away
-//     motorRotate(500); //maybe change 1000 depending on how much it turns in given time
-//     motorStop(); //stop rotating
-//     motorForwards();
-//   } else {
-//     seekObject(green);
-//   }
-    motorForwards(4000);
-    motorStop();
-    delay(1000);
-    
-    // unsigned long currentTick = millis(); // get current time in milliseocnds
-    // delay(15);  
-    // if (currentTick - lastTick >= tickInterval){
-    //     // tick elapsed, run some code...
+    unsigned long currentTick = millis(); // get current time in milliseocnds
+    delay(15);  
+    if (currentTick - lastTick >= tickInterval){
+        // tick elapsed, run some code...
 
-<<<<<<< HEAD
         // check for obstacles
         if (getFrontDistance() <= 20) { // length of claws alrdy 12cm
             // stop/run away
@@ -505,34 +369,4 @@ void loop() {
         }
         delay(100);
     }
-=======
-    //     // check for obstacles
-        // if (getFrontDistance() <= 20) { // length of claws alrdy 12cm
-        //     // stop/run away
-        //     motorRotate(500); //maybe change 1000 depending on how much it turns in given time
-        //     motorStop(); //stop rotating
-        //     motorForwards();
-    //     } else {  
-    //         seekObject(green);
-    //         //motorForwards();
-    //         //%%%%%%%%%%%%%function to find balls
-    //         // basically centeringObject() but pick a single ball to target
-    //         // change centerObject() to be in the for with a while instide the for. so when the for turns off, the while turns on
-    //         // if (ballIntoClaws() == true) {
-    //         //     int netPoints = getNetPoints();
-    //         //     if (netPoints < 0) {
-    //         //         //discard (to some other base)
-    //         //         seekObject(rightBase); // find some random base lol - ie. colour signature anything other than base?
-    //         //     } else if (netPoints == 0) {
-    //         //         //dont care and discard    OR    continue grabbing balls
-    //         //         seekObject(rightBase);
-    //         //     } else if (netPoints > 0) {
-    //         //         // go deposit    OR    continue grabbing balls
-    //         //         seekObject(ourBase);
-    //         //     }
-            
-    //         // }
-    //     }
-    // }
->>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
 }
