@@ -73,10 +73,13 @@ void seekObject(int signature){
                 
                 if (pixy.ccc.blocks[i].m_signature == signature) { // if whats seen is what is wanted
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     motorStop();
                     centerObject(signature, i);
                     motorForwards();
 =======
+=======
+>>>>>>> Stashed changes
                     motorStop();
                     centerObject(signature, i);
                     motorForwards();
@@ -87,6 +90,9 @@ void seekObject(int signature){
                     //motorForwards();
                     seenSignature = true;
 >>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                     // maybe add check here to make sure its in the centre of the frame rougly
                     centerObject(signature, i);
@@ -125,6 +131,10 @@ void seekObject(int signature){
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+>>>>>>> Stashed changes
 =======
 <<<<<<< HEAD
 >>>>>>> Stashed changes
@@ -182,6 +192,10 @@ void centerObject(int signature, int blockIndex) {
                 }
 //            }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+>>>>>>> Stashed changes
 =======
 <<<<<<< HEAD
 >>>>>>> Stashed changes
@@ -235,13 +249,19 @@ void setPixyCam(String position) {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 bool ballIntoClaws() { //note, this will check if ANY ball goes into the claw (even after searching and centering)
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
 bool ballIntoClaws() { //note, this will check if ANY ball goes into the claw (even after searching and centering)
 =======
 bool ballIntoClaws() {
 >>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     while (true) {
         if (getFrontDistance() <= 20) { // length of claws alrdy 12cm
@@ -265,13 +285,19 @@ bool ballIntoClaws() {
         if (maxY > 0 && maxY >= FRAME_BOTTOM - 10) {  //this -10 will be dependent on the speed (faster it goes, less responsive the getting y coord)
             wasAtBottom = true;  // ball in claw
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 //            return false;                                 // whats the point of this??
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
 //            return false;                                 // whats the point of this??
 =======
             return false;
 >>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         } else if (wasAtBottom && maxY == 0) {  
           // Object was at bottom and is now gone
@@ -290,13 +316,19 @@ void motorForwards(int time = 15) {
     digitalWrite(dirA, HIGH); // forwards direction
     digitalWrite(dirB, HIGH); // forwards direction
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     analogWrite(pwmA, motorSpeed+40);
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
     analogWrite(pwmA, motorSpeed+40);
 =======
     analogWrite(pwmA, motorSpeed+27);
 >>>>>>> 5b02564d9d6ed83aad79173304338ab40f2c23fe
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     analogWrite(pwmB, motorSpeed);
 
